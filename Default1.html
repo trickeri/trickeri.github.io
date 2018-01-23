@@ -1,0 +1,1328 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Drift</title>
+<script src="EaselJS/lib/easeljs-0.6.0.min.js"></script>
+<script src="SoundJS/lib/soundjs-0.4.0.min.js"></script>
+<script src="Classes/Planet.js"></script>
+<script src="Classes/Level1_1.js"></script>
+<script src="Classes/Level1_2.js"></script>
+<script src="Classes/Level1_3.js"></script>
+<script src="Classes/Level2_1.js"></script>
+<script src="Classes/Level2_2.js"></script>
+<script src="Classes/Level2_3.js"></script>
+<script src="Classes/Level3_1.js"></script>
+<script src="Classes/Level3_2.js"></script>
+<script src="Classes/Level3_3.js"></script>
+<script src="Classes/Level4_1.js"></script>
+<script src="Classes/Level4_2.js"></script>
+<script src="Classes/Level4_3.js"></script>
+<script src="Classes/Level4_4.js"></script>
+<script src="Classes/Level5_1.js"></script>
+<script src="Classes/Level5_2.js"></script>
+<script src="Classes/Level5_3.js"></script>
+<script src="Classes/Level5_4.js"></script>
+<script src="Classes/Level6_1.js"></script>
+<script src="Classes/Level6_2.js"></script>
+<script src="Classes/Level6_3.js"></script>
+<script src="Classes/Level6_4.js"></script>
+<script src="Classes/Level7_1.js"></script>
+<script src="Classes/Level8_1.js"></script>
+<script>
+//Variable declared globally so all the functions have access
+var stage;
+
+var borders;
+var borders2;
+var pressSpace;
+var titleText;
+var greenPlanet;
+var bluePlanet;
+var greenPlanetIsland;
+var greenPlanetForest;
+var greenPlanetMtns;
+var bluePlanetIsland;
+var bluePlanetForest;
+var bluePlanetMtns;
+var purplePlanetIsland;
+var purplePlanetForest;
+var purplePlanetMtns;
+
+var homePlanetText;
+var purplePlanetMini;
+var bluePlanetMini;
+var greenPlanetMini;
+var islandMini;
+var mtnsMini;
+var forestMini;
+var homePlanetText;
+
+var gridXLine;
+var gridYLine;
+var gridZLine;
+var gridIdle;
+var GridFadeInUpAnimation;
+var GridFadeInDownAnimation;
+var GridFadeOutUpAnimation;
+var GridFadeOutDownAnimation;
+var GridFadeInLeftAnimation;
+var GridFadeInRightAnimation;
+var GridFadeOutLeftAnimation;
+var GridFadeOutRightAnimation;
+
+var idleAnimation;
+var planetArray;
+
+var levelSelectBox;
+var levelBox;
+var challengeBox;
+var twoPoint;
+var threePointVert;
+var threePointHoriz;
+var twoSquare;
+var twoThreeSquare;
+var threThreeSquare;
+var twoCube;
+var smallQuestionMark;
+var bigQuestionMark;
+
+var screenState;
+var selectedLevel = "Level1_1";
+var currentLevel;
+var puzzleDimension = 2;
+var playerXLocation = 0;
+var playerYLocation = 0;
+var playerZLocation = 0;
+var amount = 0;
+var lvlSelectPlace = 0;
+var challengeSelectPlace = 0;
+var skippedOnce = "false";
+
+var animationTimerActive = false;
+var animationTimer = 0;
+    
+    var backgroundSong;
+    var aikiGhost;
+    var percussionLoop;
+    var dayTripperBeat;
+
+document.onkeydown = handleKeyPress;
+
+function init() {
+	canvas = document.getElementById("canvas");
+	stage = new createjs.Stage(canvas);
+	
+    loadSounds();
+    loadPlanets();
+	loadBorders();
+	loadBorders2();
+	loadPlayer();
+	loadGrid();
+	loadSelectionResources();
+	loadChallengeResources();
+	loadSelectionBoxes();
+	loadIntroResources();
+	loadPlanetSelectionResources();
+	
+    loadIntroScreen();
+
+	createjs.Ticker.setFPS(30);
+	createjs.Ticker.addListener(window);
+}
+    
+function loadSounds() {
+    createjs.Sound.registerSound("Sounds/Imagine.mp3", "BackgroundSong", 1);
+    createjs.Sound.registerSound("Sounds/aikiGhost.wav", "aikiGhost", 1);
+    createjs.Sound.registerSound("Sounds/dayTripperBeat.wav", "dayTripperBeat", 1);
+    createjs.Sound.registerSound("Sounds/percussionLoop.wav", "percussionLoop", 1);
+    percussionLoop = createjs.Sound.play("percussionLoop", "none", 0, 0, -1, .5, 0);
+    percussionLoop.stop();
+    dayTripperBeat = createjs.Sound.play("dayTripperBeat", "none", 0, 0, -1, .5, 0);
+    dayTripperBeat.stop();
+    aikiGhost = createjs.Sound.play("aikiGhost", "none", 0, 0, -1, .5, 0);
+    aikiGhost.stop();
+}
+
+function loadPlanets() {
+    var greenPlanetIMG = new Image();
+    greenPlanetIMG.src = 'Images/Planets/GreenPlanet.png';
+    greenPlanet = new createjs.Bitmap(greenPlanetIMG);
+    greenPlanet.x = 0;
+    greenPlanet.y = 0;
+    
+    var bluePlanetIMG = new Image();
+    bluePlanetIMG.src = 'Images/Planets/BluePlanet.png';
+    bluePlanet = new createjs.Bitmap(bluePlanetIMG);
+    bluePlanet.x = 0;
+    bluePlanet.y = 0;
+	
+	var greenPlanetIslandIMG = new Image();
+    greenPlanetIslandIMG.src = 'Images/Planets/GreenPlanetIsland.png';
+    greenPlanetIsland= new createjs.Bitmap(greenPlanetIslandIMG);
+    greenPlanetIsland.x = 0;
+    greenPlanetIsland.y = 0;
+	
+	var greenPlanetForestIMG = new Image();
+    greenPlanetForestIMG.src = 'Images/Planets/GreenPlanetForest.png';
+    greenPlanetForest = new createjs.Bitmap(greenPlanetForestIMG);
+    greenPlanetForest.x = 0;
+    greenPlanetForest.y = 0;
+	
+	var greenPlanetMtnsIMG = new Image();
+    greenPlanetMtnsIMG.src = 'Images/Planets/GreenPlanetMtns.png';
+    greenPlanetMtns = new createjs.Bitmap(greenPlanetMtnsIMG);
+    greenPlanetMtns.x = 0;
+    greenPlanetMtns.y = 0;
+	
+	var bluePlanetIslandIMG = new Image();
+    bluePlanetIslandIMG.src = 'Images/Planets/BluePlanetIsland.png';
+    bluePlanetIsland= new createjs.Bitmap(bluePlanetIslandIMG);
+    bluePlanetIsland.x = 0;
+    bluePlanetIsland.y = 0;
+	
+	var bluePlanetForestIMG = new Image();
+    bluePlanetForestIMG.src = 'Images/Planets/BluePlanetForest.png';
+    bluePlanetForest = new createjs.Bitmap(bluePlanetForestIMG);
+    bluePlanetForest.x = 0;
+    bluePlanetForest.y = 0;
+	
+	var bluePlanetMtnsIMG = new Image();
+    bluePlanetMtnsIMG.src = 'Images/Planets/BluePlanetMtns.png';
+    bluePlanetMtns = new createjs.Bitmap(bluePlanetMtnsIMG);
+    bluePlanetMtns.x = 0;
+    bluePlanetMtns.y = 0;
+	
+	var purplePlanetIslandIMG = new Image();
+    purplePlanetIslandIMG.src = 'Images/Planets/PurplePlanetIsland.png';
+    purplePlanetIsland= new createjs.Bitmap(purplePlanetIslandIMG);
+    purplePlanetIsland.x = 0;
+    purplePlanetIsland.y = 0;
+	
+	var purplePlanetForestIMG = new Image();
+    purplePlanetForestIMG.src = 'Images/Planets/PurplePlanetForest.png';
+    purplePlanetForest = new createjs.Bitmap(purplePlanetForestIMG);
+    purplePlanetForest.x = 0;
+    purplePlanetForest.y = 0;
+	
+	var purplePlanetMtnsIMG = new Image();
+    purplePlanetMtnsIMG.src = 'Images/Planets/PurplePlanetMtns.png';
+    purplePlanetMtns = new createjs.Bitmap(purplePlanetMtnsIMG);
+    purplePlanetMtns.x = 0;
+    purplePlanetMtns.y = 0;
+}
+    
+function loadBorders() {
+	var bordersIMG = new Image();
+	bordersIMG.src = 'Images/Borders.png';
+	
+	borders = new createjs.Bitmap(bordersIMG);
+	borders.x = 0;
+	borders.y = 0;
+}
+
+function loadBorders2() {
+	var borders2IMG = new Image();
+	borders2IMG.src = 'Images/Borders2.png';
+	
+	borders2 = new createjs.Bitmap(borders2IMG);
+	borders2.x = 0;
+	borders2.y = 0;
+}
+
+function loadSelectionBoxes () {
+levelBox = new Array();
+	var levelBoxIMG;
+	var q = 0;
+	var pointer = 0;
+	if(screenState == "levelSelection"){
+		pointer = lvlSelectPlace;
+	}else {
+		pointer = challengeSelectPlace;
+	}
+	for(var i=0;i<3;i++){
+		for(var j=0;j<3;j++){
+			if(pointer == q){
+				levelBoxIMG = new Image();
+				levelBoxIMG.src = 'Images/Sprite Sheets/LevelSelectSquares2.png';
+				var selectBoxAnimationSheet = new createjs.SpriteSheet({
+					images: [levelBoxIMG],
+					frames: { width: 134, height: 148, regX: 0, regY: 0 },
+					animations: {
+						selection: [0, 149, "selection"]
+					}
+				});
+				levelBox[q] = new createjs.BitmapAnimation(selectBoxAnimationSheet);
+				levelBox[q].gotoAndPlay("selection");
+				levelBox[q].x = (42 + (j * 145)) - 18;
+				levelBox[q].y = (32 + (i * 152)) - 14;
+				
+			}else if(screenState == "levelSelection"){
+				levelBoxIMG = new Image();
+				levelBoxIMG.src = 'Images/Selection Screen/LevelSquareFilled.png';
+				levelBox[q] = new createjs.Bitmap(levelBoxIMG);
+				levelBox[q].x = 42 + (j * 145);
+				levelBox[q].y = 32 + (i * 152);
+				
+			}else if(screenState == "challengeSelection"){
+				levelBoxIMG = new Image();
+				levelBoxIMG.src = 'Images/Selection Screen/LevelSquareFilled.png';
+				levelBox[q] = new createjs.Bitmap(levelBoxIMG);
+				levelBox[q].x = 42 + (j * 145);
+				levelBox[q].y = 32 + (i * 152);
+			}
+			if(i == 2 && j == 1 && screenState == "levelSelection"){
+				j = 3;
+			}
+			q++;
+		}
+	}
+}
+
+function loadSelectionResources () {
+	
+	var twoPointIMG = new Image();
+	twoPointIMG.src = 'Images/Selection Screen/2PointLine.png';
+	twoPoint = new createjs.Bitmap(twoPointIMG);
+	twoPoint.x = 80;
+	twoPoint.y = 45;
+	
+	var threePointVertIMG = new Image();
+	threePointVertIMG.src = 'Images/Selection Screen/3PointLineVert.png';
+	threePointVert = new createjs.Bitmap(threePointVertIMG);
+	threePointVert.x = 227;
+	threePointVert.y = 45;
+	
+	var threePointHorizIMG = new Image();
+	threePointHorizIMG.src = 'Images/Selection Screen/3PointLineHoriz.png';
+	threePointHoriz = new createjs.Bitmap(threePointHorizIMG);
+	threePointHoriz.x = 338;
+	threePointHoriz.y = 81;
+	
+	var twoSquareIMG = new Image();
+	twoSquareIMG.src = 'Images/Selection Screen/2By2Square.png';
+	twoSquare = new createjs.Bitmap(twoSquareIMG);
+	twoSquare.x = 53;
+	twoSquare.y = 204;
+	
+	var twoThreeSquareIMG = new Image();
+	twoThreeSquareIMG.src = 'Images/Selection Screen/2By3Square.png';
+	twoThreeSquare = new createjs.Bitmap(twoThreeSquareIMG);
+	twoThreeSquare.x = 207;
+	twoThreeSquare.y = 194;
+	
+	var threeThreeSquareIMG = new Image();
+	threeThreeSquareIMG.src = 'Images/Selection Screen/3By3Square.png';
+	threeThreeSquare = new createjs.Bitmap(threeThreeSquareIMG);
+	threeThreeSquare.x = 345;
+	threeThreeSquare.y = 206;
+	
+	var twoCubeIMG = new Image();
+	twoCubeIMG.src = 'Images/Selection Screen/2By2Cube.png';
+	twoCube = new createjs.Bitmap(twoCubeIMG);
+	twoCube.x = 52;
+	twoCube.y = 356;
+	
+	var smallQuestionMarkIMG = new Image();
+	smallQuestionMarkIMG.src = 'Images/Selection Screen/HelpQuestionMark.png';
+	smallQuestionMark = new createjs.Bitmap(smallQuestionMarkIMG);
+	smallQuestionMark.x = 0;
+	smallQuestionMark.y = 0;
+	
+	var bigQuestionMarkIMG = new Image();
+	bigQuestionMarkIMG.src = 'Images/Selection Screen/QuestionMark.png';
+	bigQuestionMark = new createjs.Bitmap(bigQuestionMarkIMG);
+	bigQuestionMark.x = 215;
+	bigQuestionMark.y = 351;
+	
+	var levelSelectBoxIMG = new Image();
+	levelSelectBoxIMG.src = 'Images/Selection Screen/LevelSelectSquare.png';
+	levelSelectBox;
+}
+
+function loadChallengeResources() {
+	challengeBox = new Array();
+	var q = 0;
+	var pointer = 0;
+	var challengeOneIMG;
+	
+	for(var i = 0; i < 3;i++){
+		for(var j = 0;j < 3;j++){
+			challengeOneIMG = new Image();
+			challengeOneIMG.src = 'Images/Challenge Screen/Challenge' + ((i * 3) + j + 1) + '.png';
+			challengeBox[q] = new createjs.Bitmap(challengeOneIMG);
+			challengeBox[q].x = 42 + (j * 145) + 25;
+			challengeBox[q].y = 32 + (i * 152) + 13;
+			q++;
+		}
+	}
+}
+
+function loadLevelSelect () {
+	screenState = "levelSelection";
+
+	stage.removeAllChildren();
+    stage.addChild(borders);
+	stage.addChild(twoPoint);
+	stage.addChild(threePointVert);
+	stage.addChild(threePointHoriz);
+	stage.addChild(twoSquare);
+	stage.addChild(twoThreeSquare);
+	stage.addChild(threeThreeSquare);
+	stage.addChild(twoCube);
+	stage.addChild(bigQuestionMark);
+
+	for(var i=0;i< 8;i++){
+		stage.addChild(levelBox[i]);
+	}
+	
+}
+
+function loadChallengeSelect () {
+	screenState = "challengeSelection";
+
+	stage.removeAllChildren();
+	stage.addChild(borders);
+	amount = 0;
+	
+	switch(lvlSelectPlace){
+		case 0:
+			amount = 3;
+			break;
+		case 1:
+			amount = 3;
+			break;
+		case 2:
+			amount = 3;
+			break;
+		case 3:
+			amount = 4;
+			break;
+		case 4:
+			amount = 4;
+			break;
+		case 5:
+			amount = 4;
+			break;
+		case 6:
+			amount = 5;
+			break;
+		case 7:
+			amount = 5;
+			break;
+		}
+	
+	for(var j = 0; j< amount; j++){
+		stage.addChild(challengeBox[j]);
+	}
+	
+	for(var i=0;i<amount;i++){
+		stage.addChild(levelBox[i]);
+	}
+	
+}
+
+function loadGrid() {
+	var gridIdleSheetIMG = new Image();
+	gridIdleSheetIMG.src = 'Images/Sprite Sheets/GridAnimationIdle2.png';
+	var gridIdleSheet = new createjs.SpriteSheet({
+	    images: [gridIdleSheetIMG],
+        frames: { width: 80, height: 70, regX: 0, regY: 0 },
+	    animations: {
+	        idle: [0, 269, "idle"]
+	    }
+	});
+	gridIdle = new createjs.BitmapAnimation(gridIdleSheet);
+    gridIdle.gotoAndPlay("idle");
+    gridIdle.x = 200;
+    gridIdle.y = 300;
+    gridIdle.currentFrame = 0;
+	
+	
+	var gridXLineIMG = new Image();
+	gridXLineIMG.src = 'Images/Grid/GridXAxisLine2.png';
+	gridXLine = new createjs.Bitmap(gridXLineIMG);
+	gridXLine.x = 155;
+	gridXLine.y = 230;
+	var gridYLineIMG = new Image();
+	gridYLineIMG.src = 'Images/Grid/GridYAxisLine.png';
+	gridYLine = new createjs.Bitmap(gridYLineIMG);
+	gridYLine.x = 50;
+	gridYLine.y = 330;
+	var gridZLineIMG = new Image();
+	gridZLineIMG.src = 'Images/Grid/GridZAxisLine.png';
+	gridZLine = new createjs.Bitmap(gridZLineIMG);
+	gridZLine.x = 240;
+	gridZLine.y = 130;
+
+	//All the movement animations
+	//Up & Down
+	//Fade In Up
+    var GridFadeInUpAnimationSheetIMG = new Image();
+	GridFadeInUpAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeInUp.png';
+	var GridFadeInUpAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeInUpAnimationSheetIMG],
+        frames: { width: 80, height: 306, regX: 0, regY: 0 },
+        animations: {
+        FadeInUp: [0, 29, false]}
+    });
+	GridFadeInUpAnimation = new createjs.BitmapAnimation(GridFadeInUpAnimationSheet);
+	
+	//Fade In Down
+	var GridFadeInDownAnimationSheetIMG = new Image();
+	GridFadeInDownAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeInDown.png';
+	var GridFadeInDownAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeInDownAnimationSheetIMG],
+        frames: { width: 79, height: 297, regX: 0, regY: 0 },
+        animations: {
+        FadeInDown: [0, 29, false]}
+    });
+	GridFadeInDownAnimation = new createjs.BitmapAnimation(GridFadeInDownAnimationSheet);
+	
+	//Fade Out Up
+	var GridFadeOutUpAnimationSheetIMG = new Image();
+	GridFadeOutUpAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeOutUp.png';
+	var GridFadeOutUpAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeOutUpAnimationSheetIMG],
+        frames: { width: 76, height: 312, regX: 0, regY: 0 },
+        animations: {
+        FadeOutUp: [0, 29, false]}
+    });
+	GridFadeOutUpAnimation = new createjs.BitmapAnimation(GridFadeOutUpAnimationSheet);
+	
+	//Fade Out Down
+	var GridFadeOutDownAnimationSheetIMG = new Image();
+	GridFadeOutDownAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeOutDown.png';
+	var GridFadeOutDownAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeOutDownAnimationSheetIMG],
+        frames: { width: 76, height: 300, regX: 0, regY: 0 },
+        animations: {
+        FadeOutDown: [0, 29, false]}
+    });
+	GridFadeOutDownAnimation = new createjs.BitmapAnimation(GridFadeOutDownAnimationSheet);
+	
+	//Left & Right
+	//Fade In Left
+    var GridFadeInLeftAnimationSheetIMG = new Image();
+	GridFadeInLeftAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeInLeft.png';
+	var GridFadeInLeftAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeInLeftAnimationSheetIMG],
+        frames: { width: 299, height: 68, regX: 0, regY: 0 },
+        animations: {
+        FadeInLeft: [0, 29, false]}
+    });
+	GridFadeInLeftAnimation = new createjs.BitmapAnimation(GridFadeInLeftAnimationSheet);
+	
+	//Fade In Right
+	var GridFadeInRightAnimationSheetIMG = new Image();
+	GridFadeInRightAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeInRight.png';
+	var GridFadeInRightAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeInRightAnimationSheetIMG],
+        frames: { width: 300, height: 69, regX: 0, regY: 0 },
+        animations: {
+        FadeInRight: [0, 29, false]}
+    });
+	GridFadeInRightAnimation = new createjs.BitmapAnimation(GridFadeInRightAnimationSheet);
+	
+	//Fade Out Left
+	var GridFadeOutLeftAnimationSheetIMG = new Image();
+	GridFadeOutLeftAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeOutLeft.png';
+	var GridFadeOutLeftAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeOutLeftAnimationSheetIMG],
+        frames: { width: 300, height: 67, regX: 0, regY: 0 },
+        animations: {
+        FadeOutLeft: [0, 29, false]}
+    });
+	GridFadeOutLeftAnimation = new createjs.BitmapAnimation(GridFadeOutLeftAnimationSheet);
+	
+	//Fade Out Right
+	var GridFadeOutRightAnimationSheetIMG = new Image();
+	GridFadeOutRightAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeOutRight.png';
+	var GridFadeOutRightAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeOutRightAnimationSheetIMG],
+        frames: { width: 300, height: 68, regX: 0, regY: 0 },
+        animations: {
+        FadeOutRight: [0, 29, false]}
+    });
+	GridFadeOutRightAnimation = new createjs.BitmapAnimation(GridFadeOutRightAnimationSheet);
+	
+	//Forward & Backward
+	//Fade In Forward
+    var GridFadeInForwardAnimationSheetIMG = new Image();
+	GridFadeInForwardAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeInForward.png';
+	var GridFadeInForwardAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeInForwardAnimationSheetIMG],
+        frames: { width: 170, height: 200, regX: 0, regY: 0 },
+        animations: {
+        FadeInForward: [0, 29, false]}
+    });
+	GridFadeInForwardAnimation = new createjs.BitmapAnimation(GridFadeInForwardAnimationSheet);
+	
+	//Fade In Backward
+	var GridFadeInBackwardAnimationSheetIMG = new Image();
+	GridFadeInBackwardAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeInBackward.png';
+	var GridFadeInBackwardAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeInBackwardAnimationSheetIMG],
+        frames: { width: 170, height: 200, regX: 0, regY: 0 },
+        animations: {
+        FadeInBackward: [0, 29, false]}
+    });
+	GridFadeInBackwardAnimation = new createjs.BitmapAnimation(GridFadeInBackwardAnimationSheet);
+	
+	//Fade Out Forward
+	var GridFadeOutForwardAnimationSheetIMG = new Image();
+	GridFadeOutForwardAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeOutForward.png';
+	var GridFadeOutForwardAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeOutForwardAnimationSheetIMG],
+        frames: { width: 175, height: 198, regX: 0, regY: 0 },
+        animations: {
+        FadeOutForward: [0, 29, false]}
+    });
+	GridFadeOutForwardAnimation = new createjs.BitmapAnimation(GridFadeOutForwardAnimationSheet);
+	
+	//Fade Out Backward
+	var GridFadeOutBackwardAnimationSheetIMG = new Image();
+	GridFadeOutBackwardAnimationSheetIMG.src = 'Images/Sprite Sheets/GridAnimationFadeOutBackward.png';
+	var GridFadeOutBackwardAnimationSheet = new createjs.SpriteSheet({
+        images: [GridFadeOutBackwardAnimationSheetIMG],
+        frames: { width: 250, height: 250, regX: 0, regY: 0 },
+        animations: {
+        FadeOutBackward: [0, 29, false]}
+    });
+	GridFadeOutBackwardAnimation = new createjs.BitmapAnimation(GridFadeOutBackwardAnimationSheet);
+}
+
+function loadPlayer() {
+    var idleAnimationSheetIMG = new Image();
+	idleAnimationSheetIMG.src = 'Images/Sprite Sheets/DriftSmoothestAnimation.png';
+
+	var idleAnimationSheet = new createjs.SpriteSheet({
+	    images: [idleAnimationSheetIMG],
+        frames: { width: 114, height: 113, regX: 0, regY: 0 },
+	    animations: {
+	        idle: [0, 359, "idle"]
+	    }
+	});
+    
+    idleAnimation = new createjs.BitmapAnimation(idleAnimationSheet);
+    idleAnimation.gotoAndPlay("idle");
+    idleAnimation.x = 95;
+    idleAnimation.y = 190;
+    idleAnimation.currentFrame = 0;
+}
+
+function loadLevel() {
+	if(lvlSelectPlace == 0){
+		if (challengeSelectPlace == 0) {
+			currentLevel = new Level1_1();
+		} else if (challengeSelectPlace == 1) {
+			currentLevel = new Level1_2();
+		} else if (challengeSelectPlace == 2) {
+			currentLevel = new Level1_3();
+		}
+	}else if(lvlSelectPlace == 1){
+		if (challengeSelectPlace == 0) {
+			currentLevel = new Level2_1();
+		} else if (challengeSelectPlace == 1) {
+			currentLevel = new Level2_2();
+		} else if (challengeSelectPlace == 2) {
+			currentLevel = new Level2_3();
+		}
+	}else if(lvlSelectPlace == 2){
+		if (challengeSelectPlace == 0) {
+			currentLevel = new Level3_1();
+		} else if (challengeSelectPlace == 1) {
+			currentLevel = new Level3_2();
+		} else if (challengeSelectPlace == 2) {
+			currentLevel = new Level3_3();
+		}
+	}else if(lvlSelectPlace == 3){
+		if (challengeSelectPlace == 0) {
+			currentLevel = new Level4_1();
+		} else if (challengeSelectPlace == 1) {
+			currentLevel = new Level4_2();
+		} else if (challengeSelectPlace == 2) {
+			currentLevel = new Level4_3();
+		} else if (challengeSelectPlace == 3) {
+			currentLevel = new Level4_4();
+		}
+	}else if(lvlSelectPlace == 4){
+		if (challengeSelectPlace == 0) {
+			currentLevel = new Level5_1();
+		} else if (challengeSelectPlace == 1) {
+			currentLevel = new Level5_2();
+		} else if (challengeSelectPlace == 2) {
+			currentLevel = new Level5_3();
+		} else if (challengeSelectPlace == 3) {
+			currentLevel = new Level5_4();
+		}
+	}else if(lvlSelectPlace == 5){
+		if (challengeSelectPlace == 0) {
+			currentLevel = new Level6_1();
+		} else if (challengeSelectPlace == 1) {
+			currentLevel = new Level6_2();
+		} else if (challengeSelectPlace == 2) {
+			currentLevel = new Level6_3();
+		} else if (challengeSelectPlace == 3) {
+			currentLevel = new Level6_4();
+		}
+	}else if(lvlSelectPlace == 6){
+		currentLevel = new Level7_1();
+	}else if(lvlSelectPlace == 7) {
+		currentLevel = new Level8_1();
+	}
+    var planetIsLocked = false;
+    var planetApproachDirection = "none";
+    planetArray = new Array(currentLevel.puzzleXDimension);
+    //console.log(currentLevel.solutionDirectionArray);
+	
+    for (i=0; i < currentLevel.puzzleXDimension; i++) {
+        planetArray[i] = new Array(currentLevel.puzzleYDimension);
+        for (j=0; j < currentLevel.puzzleYDimension; j++) {
+            planetArray[i][j] = new Array(currentLevel.puzzleZDimension);
+            for (k=0; k < currentLevel.puzzleZDimension; k++) {
+                for (l=0; l < currentLevel.solutionSteps; l++) {
+                    if (""+i+", "+j+", "+k+""==currentLevel.solutionLocationArray[l]) {
+                        planetIsLocked = true;
+                        planetApproachDirection = currentLevel.solutionDirectionArray[l];
+                        l += currentLevel.solutionSteps;
+                    } else {
+						planetIsLocked = false;
+						planetApproachDirection = "none";
+					}
+                }
+                planetArray[i][j][k] = new Planet(i, j, k, planetIsLocked, planetApproachDirection);
+				//console.log(planetArray[i][j][k]);
+            }
+        }
+    }
+}
+
+function loadIntroResources () {
+    var titleTextIMG = new Image();
+    titleTextIMG.src = 'Images/DriftText.png';
+    titleText = new createjs.Bitmap(titleTextIMG);
+    titleText.x = 0;
+    titleText.y = 0;
+    
+    var pressSpaceSheetIMG = new Image();
+    pressSpaceSheetIMG.src = 'Images/Sprite Sheets/PressSpace.png';
+    pressSpaceSheet = new createjs.SpriteSheet({
+        images: [pressSpaceSheetIMG],
+        frames: { width: 512, height: 64, regX:0, regY: 0 },
+        animations: {
+            flicker: [0, 29, "flicker", 4]
+        }
+    });
+    pressSpace = new createjs.BitmapAnimation(pressSpaceSheet);
+    pressSpace.gotoAndPlay("flicker");
+    pressSpace.x = 50;
+    pressSpace.y = 470;
+    pressSpace.currentFrame = 0;
+}
+
+function loadIntroScreen() {
+    screenState = "intro";
+
+	stage.removeAllChildren();
+    stage.addChild(titleText);
+    stage.addChild(pressSpace);
+    stage.addChild(borders);
+}
+
+function loadPlanetSelectionResources() {
+    var homePlanetTextIMG = new Image();
+    homePlanetTextIMG.src = 'Images/HomePlanetText.png';
+    homePlanetText = new createjs.Bitmap(homePlanetTextIMG);
+    homePlanetText.x = 35;
+    homePlanetText.y = 50;
+
+    var purplePlanetMiniIMG = new Image();
+    purplePlanetMiniIMG.src = 'Images/Planets/PurplePlanetMini.png';
+    purplePlanetMini = new createjs.Bitmap(purplePlanetMiniIMG);
+    purplePlanetMini.x = 400;
+    purplePlanetMini.y = 80;
+    var bluePlanetMiniIMG = new Image();
+    bluePlanetMiniIMG.src = 'Images/Planets/BluePlanetMini.png';
+    bluePlanetMini = new createjs.Bitmap(bluePlanetMiniIMG);
+    bluePlanetMini.x = 400;
+    bluePlanetMini.y = 80;
+    var greenPlanetMiniIMG = new Image();
+    greenPlanetMiniIMG.src = 'Images/Planets/GreenPlanetMini.png';
+    greenPlanetMini = new createjs.Bitmap(greenPlanetMiniIMG);
+    greenPlanetMini.x = 400;
+    greenPlanetMini.y = 80;
+
+    var islandMiniIMG = new Image();
+    islandMiniIMG.src = 'Images/Planets/IslandMini.png';
+    islandMini = new createjs.Bitmap(islandMiniIMG);
+    islandMini.x = 390;
+    islandMini.y = 160;
+    var mtnsMiniIMG = new Image();
+    mtnsMiniIMG.src = 'Images/Planets/MtnsMini.png';
+    mtnsMini = new createjs.Bitmap(mtnsMiniIMG);
+    mtnsMini.x = 395;
+    mtnsMini.y = 160;
+    var forestMiniIMG = new Image();
+    forestMiniIMG.src = 'Images/Planets/ForestMini.png';
+    forestMini = new createjs.Bitmap(forestMiniIMG);
+    forestMini.x = 400;
+    forestMini.y = 160;
+}
+
+function loadPlanetSelectionScreen() {
+    screenState = "planetSelection";
+
+    stage.removeAllChildren();
+    if (currentLevel.solution == "blue forest") {
+        stage.addChild(bluePlanetMini);
+        stage.addChild(forestMini);
+    } else if (currentLevel.solution == "blue mtns") {
+        stage.addChild(bluePlanetMini);
+        stage.addChild(mtnsMini);
+    } else if (currentLevel.solution == "blue island") {
+        stage.addChild(bluePlanetMini);
+        stage.addChild(islandMini);
+    } else if (currentLevel.solution == "green forest") {
+        stage.addChild(greenPlanetMini);
+        stage.addChild(forestMini);
+    } else if (currentLevel.solution == "green mtns") {
+        stage.addChild(greenPlanetMini);
+        stage.addChild(mtnsMini);
+    } else if (currentLevel.solution == "green island") {
+        stage.addChild(greenPlanetMini);
+        stage.addChild(islandMini);
+    } else if (currentLevel.solution == "purple forest") {
+        stage.addChild(purplePlanetMini);
+        stage.addChild(forestMini);
+    } else if (currentLevel.solution == "purple mtns") {
+        stage.addChild(purplePlanetMini);
+        stage.addChild(mtnsMini);
+    } else if (currentLevel.solution == "purple island") {
+        stage.addChild(purplePlanetMini);
+        stage.addChild(islandMini);
+    }
+
+
+	if (currentLevel.puzzleYDimension > 1) {
+		stage.addChild(gridYLine);
+	}
+	if (currentLevel.puzzleZDimension > 1) {
+		stage.addChild(gridZLine);
+	}
+	stage.addChild(gridIdle);
+	if (currentLevel.puzzleXDimension > 1) {
+		stage.addChild(gridXLine);
+	}
+    stage.addChild(borders2);
+    stage.addChild(idleAnimation);
+    screenState = "planetSelection";
+}
+        
+function handleKeyPress(e) {
+	if (e.keyCode=="8") {
+		e.preventDefault();
+		if(screenState=="levelSelection"){
+			loadIntroScreen();
+			lvlSelectPlace = 0;
+		}else if(screenState == "challengeSelection"){
+			loadLevelSelect();
+			loadSelectionBoxes();
+			challengeSelectPlace = 0;
+		}else if(screenState =="planetSelection"){
+			loadChallengeSelect();
+            playerXLocation = 0;
+            playerYLocation = 0;
+            playerZLocation = 0;
+		} else if (screenState=="win") {
+			screenState = "challengeSelection";
+			loadSelectionBoxes();
+			loadChallengeSelect();
+		} else if (screenState=="planet") {
+            stage.removeAllChildren();
+            loadPlanetSelectionScreen();
+                
+            screenState = "planetSelection";
+        }
+	}
+	
+    if (e.keyCode=="32") {
+            e.preventDefault();
+            if (screenState=="intro") {
+                backgroundSong = createjs.Sound.play("BackgroundSong", "none", 0, 0, -1, .5, 0);
+				screenState = "levelSelection";
+				loadSelectionBoxes();
+                loadLevelSelect();
+			}else if (screenState == "levelSelection"){
+				screenState = "challengeSelection";
+				loadSelectionBoxes();
+				loadChallengeSelect();
+			}else if (screenState == "challengeSelection"){
+				loadLevel();
+				loadPlanetSelectionScreen();
+					screenState = "planetSelection";
+            } else if (screenState == "planetSelection"){
+					if (animationTimerActive==false) {
+						stage.removeAllChildren();
+						
+						if (playerZLocation == 0) {
+							if (playerYLocation == 0) {
+								stage.addChild(greenPlanetForest);
+							} else if (playerYLocation == 1) {
+								stage.addChild(greenPlanetMtns);
+							} else if (playerYLocation == 2) {
+								stage.addChild(greenPlanetIsland);
+							}
+						} else if (playerZLocation == 1) {
+							if (playerYLocation == 0) {
+								stage.addChild(bluePlanetForest);
+							} else if (playerYLocation == 1) {
+								stage.addChild(bluePlanetMtns);
+							} else if (playerYLocation == 2) {
+								stage.addChild(bluePlanetIsland);
+							}
+						} else if (playerZLocation == 2) {
+							if (playerYLocation == 0) {
+								stage.addChild(purplePlanetForest);
+							} else if (playerYLocation == 1) {
+								stage.addChild(purplePlanetMtns);
+							} else if (playerYLocation == 2) {
+								stage.addChild(purplePlanetIsland);
+							}
+						}
+                        
+                       /* if (playerXLocation == 0) {
+                            backgroundSong.stop();
+                            aikiGhost.play();
+                        } else if (playerXLocation == 1) {
+                            backgroundSong.stop();
+                            dayTripperBeat.play();
+                        } else if (playerXLocation == 2) {
+                            backgroundSong.stop();
+                            percussionLoop.play();
+                        }
+						*/
+						
+						screenState = "planet";
+						
+						if ("" + playerXLocation + ", " + playerYLocation +
+							", " + playerZLocation + ""==currentLevel.solutionCoordinates) {
+							screenState = "win";
+							stage.addChild(homePlanetText);
+						}
+					}
+			} else if (screenState=="planet") {
+                stage.removeAllChildren();
+                loadPlanetSelectionScreen();
+                
+                /*percussionLoop.stop();
+                dayTripperBeat.stop();
+                aikiGhost.stop();
+                backgroundSong.play(); */
+                screenState = "planetSelection";
+            } else if (screenState=="win") {
+				screenState = "challengeSelection";
+				loadSelectionBoxes();
+				loadChallengeSelect();
+				playerXLocation = 0;
+				playerYLocation = 0;
+				playerZLocation = 0;
+			}
+	} else if (e.keyCode=="38") {
+        e.preventDefault();
+		
+		if (screenState == "planetSelection") {
+			if (currentLevel.puzzleZDimension > 1) {
+				if (animationTimerActive == false) {
+					GridFadeInUpAnimation.gotoAndPlay("FadeInUp");
+					GridFadeInUpAnimation.x = 200;
+					GridFadeInUpAnimation.y = 62;
+					GridFadeInUpAnimation.currentFrame = 0;
+					stage.addChild(GridFadeInUpAnimation);
+					GridFadeOutDownAnimation.gotoAndPlay("FadeOutDown");
+					GridFadeOutDownAnimation.x = 205;
+					GridFadeOutDownAnimation.y = 300;
+					GridFadeOutDownAnimation.currentFrame = 0;
+					stage.addChild(GridFadeOutDownAnimation);
+	
+					playerZLocation++;
+					if (playerZLocation==currentLevel.puzzleZDimension) {
+						playerZLocation = 0;
+					}
+	
+					while (planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked==true) {
+						for (i=0; i < currentLevel.solutionSteps; i++) {
+							if ("" + playerXLocation + ", " + playerYLocation +
+								", " + playerZLocation + ""==currentLevel.solutionLocationArray[i]) {
+								if (currentLevel.solutionDirectionArray[i]=="up" && skippedOnce=="false") {
+									planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked=false;
+								} else {
+									playerZLocation++;
+									skippedOnce = "true";
+								}
+							}
+						}
+						if (playerZLocation==currentLevel.puzzleZDimension) {
+							playerZLocation = 0;
+						}
+					}
+					
+					animationTimerActive = true;
+					skippedOnce = "false";
+					//console.log(playerXLocation, playerYLocation, playerZLocation);
+					stage.removeChild(gridIdle);
+				}
+			}
+		} else if( screenState == "levelSelection"){
+			if (lvlSelectPlace > 2){
+				lvlSelectPlace -= 3;
+				loadSelectionBoxes();
+				loadLevelSelect();
+			}
+		}else if( screenState == "challengeSelection"){
+			if (challengeSelectPlace > 2){
+				challengeSelectPlace -= 3;
+				loadSelectionBoxes();
+				loadChallengeSelect();
+			}
+		}
+	} else if (e.keyCode=="40") {
+        e.preventDefault();
+
+		if (screenState == "planetSelection") {
+			if (currentLevel.puzzleZDimension > 1) {
+				if (animationTimerActive == false) {
+					GridFadeOutUpAnimation.gotoAndPlay("FadeOutUp");
+					GridFadeOutUpAnimation.x = 203;
+					GridFadeOutUpAnimation.y = 62;
+					GridFadeOutUpAnimation.currentFrame = 0;
+					stage.addChild(GridFadeOutUpAnimation);
+					GridFadeInDownAnimation.gotoAndPlay("FadeInDown");
+					GridFadeInDownAnimation.x = 205;
+					GridFadeInDownAnimation.y = 300;
+					GridFadeInDownAnimation.currentFrame = 0;
+					stage.addChild(GridFadeInDownAnimation);
+		
+	
+					playerZLocation--;
+					if (playerZLocation==-1) {
+						playerZLocation += currentLevel.puzzleZDimension;
+					}
+					
+					while (planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked==true) {
+						for (i=0; i < currentLevel.solutionSteps; i++) {
+							if ("" + playerXLocation + ", " + playerYLocation +
+								", " + playerZLocation + ""==currentLevel.solutionLocationArray[i]) {
+								if (currentLevel.solutionDirectionArray[i]=="down" && skippedOnce=="false") {
+									planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked=false;
+								} else {
+									playerZLocation--;
+									skippedOnce = "true";
+								}
+							}
+						}
+						if (playerZLocation==-1) {
+							playerZLocation += currentLevel.puzzleZDimension;
+						}
+					}
+					
+					animationTimerActive = true;
+					skippedOnce = "false";
+					//console.log(playerXLocation, playerYLocation, playerZLocation);
+					stage.removeChild(gridIdle);
+				}
+			}
+		} else if( screenState == "levelSelection"){
+			if(lvlSelectPlace < (levelBox.length - 3)){
+				lvlSelectPlace += 3;
+				loadSelectionBoxes();
+				loadLevelSelect();
+			}
+		}else if( screenState == "challengeSelection"){
+			if(challengeSelectPlace < (amount - (3 - (amount%3)))){
+				challengeSelectPlace += 3;
+				loadSelectionBoxes();
+				loadChallengeSelect();
+			}
+		}
+	} else if (e.keyCode=="37") {
+        e.preventDefault();
+		
+		if (screenState == "planetSelection") {
+			 if (currentLevel.puzzleYDimension > 1) {
+				if (animationTimerActive == false) {
+					GridFadeInLeftAnimation.gotoAndPlay("FadeInLeft");
+					GridFadeInLeftAnimation.x = -21;
+					GridFadeInLeftAnimation.y = 300;
+					GridFadeInLeftAnimation.currentFrame = 0;
+					stage.addChild(GridFadeInLeftAnimation);
+					GridFadeOutRightAnimation.gotoAndPlay("FadeOutRight");
+					GridFadeOutRightAnimation.x = 220;
+					GridFadeOutRightAnimation.y = 300;
+					GridFadeOutRightAnimation.currentFrame = 0;
+					stage.addChild(GridFadeOutRightAnimation);
+	
+					playerYLocation--;
+					if (playerYLocation==-1) {
+						playerYLocation += currentLevel.puzzleYDimension;
+					}
+					
+					while (planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked==true) {
+						for (i=0; i < currentLevel.solutionSteps; i++) {
+							if ("" + playerXLocation + ", " + playerYLocation +
+								", " + playerZLocation + ""==currentLevel.solutionLocationArray[i]) {
+								if (currentLevel.solutionDirectionArray[i]=="left" && skippedOnce=="false") {
+									planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked=false;
+								} else {
+									playerYLocation--;
+									skippedOnce = "true";
+								}
+							}
+						}
+						if (playerYLocation==-1) {
+							playerYLocation += currentLevel.puzzleYDimension;
+						}
+					}
+					
+					animationTimerActive = true;
+					skippedOnce = "false";
+					//console.log(playerXLocation, playerYLocation, playerZLocation);
+					stage.removeChild(gridIdle);
+				}
+			}
+		} else if(screenState == "levelSelection") {
+			if(lvlSelectPlace > 0){
+				lvlSelectPlace --;
+				loadSelectionBoxes();
+				loadLevelSelect();
+			}
+		}else if(screenState == "challengeSelection") {
+			if(challengeSelectPlace > 0){
+				challengeSelectPlace --;
+				loadSelectionBoxes();
+				loadChallengeSelect();
+			}
+		}
+	} else if (e.keyCode=="39") {
+        e.preventDefault();
+
+		if (screenState == "planetSelection") {
+			if (currentLevel.puzzleYDimension > 1) {
+				if (animationTimerActive == false) {
+					GridFadeInRightAnimation.gotoAndPlay("FadeInRight");
+					GridFadeInRightAnimation.x = 205;
+					GridFadeInRightAnimation.y = 300;
+					GridFadeInRightAnimation.currentFrame = 0;
+					stage.addChild(GridFadeInRightAnimation);
+					GridFadeOutLeftAnimation.gotoAndPlay("FadeOutLeft");
+					GridFadeOutLeftAnimation.x = -10;
+					GridFadeOutLeftAnimation.y = 300;
+					GridFadeOutLeftAnimation.currentFrame = 0;
+					stage.addChild(GridFadeOutLeftAnimation);
+	
+					playerYLocation++;
+					if (playerYLocation==currentLevel.puzzleYDimension) {
+						playerYLocation = 0;
+					}
+	
+					while (planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked==true) {
+						for (i=0; i < currentLevel.solutionSteps; i++) {
+							if ("" + playerXLocation + ", " + playerYLocation +
+								", " + playerZLocation + ""==currentLevel.solutionLocationArray[i]) {
+								if (currentLevel.solutionDirectionArray[i]=="right" && skippedOnce=="false") {
+									planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked=false;
+								} else {
+									playerYLocation++;
+									skippedOnce = "true";
+								}
+							}
+						}
+						if (playerYLocation==currentLevel.puzzleYDimension) {
+							playerYLocation = 0;
+						}
+					}
+					
+					animationTimerActive = true;
+					skippedOnce = "false";
+					//console.log(playerXLocation, playerYLocation, playerZLocation);
+					stage.removeChild(gridIdle);
+				}
+			}
+		}else if(screenState == "levelSelection") {
+			if(lvlSelectPlace < levelBox.length - 1){
+				lvlSelectPlace ++;
+				loadSelectionBoxes();
+				loadLevelSelect();
+			}
+		}else if(screenState == "challengeSelection") {
+			if(challengeSelectPlace < amount - 1){
+				challengeSelectPlace ++;
+				loadSelectionBoxes();
+				loadChallengeSelect();
+			}
+		}
+	} else if (e.keyCode=="88") {
+        e.preventDefault();
+
+		if (screenState == "planetSelection") {
+			if (currentLevel.puzzleXDimension > 1) {
+				if (animationTimerActive == false) {
+					GridFadeInBackwardAnimation.gotoAndPlay("FadeInBackward");
+					GridFadeInBackwardAnimation.x = 205;
+					GridFadeInBackwardAnimation.y = 250;
+					GridFadeInBackwardAnimation.currentFrame = 0;
+					stage.addChild(GridFadeInBackwardAnimation);
+					GridFadeOutForwardAnimation.gotoAndPlay("FadeOutForward");
+					GridFadeOutForwardAnimation.x = 50;
+					GridFadeOutForwardAnimation.y = 250;
+					GridFadeOutForwardAnimation.currentFrame = 0;
+					stage.addChild(GridFadeOutForwardAnimation);
+	
+					playerXLocation--;
+					if (playerXLocation==-1) {
+						playerXLocation += currentLevel.puzzleXDimension;
+					}
+					
+					while (planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked==true) {
+						for (i=0; i < currentLevel.solutionSteps; i++) {
+							if ("" + playerXLocation + ", " + playerYLocation +
+								", " + playerZLocation + ""==currentLevel.solutionLocationArray[i]) {
+								if (currentLevel.solutionDirectionArray[i]=="backward" && skippedOnce=="false") {
+									planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked=false;
+								} else {
+									playerXLocation--;
+									skippedOnce = "true";
+								}
+							}
+						}
+						if (playerXLocation==-1) {
+							playerXLocation += currentLevel.puzzleXDimension;
+						}
+					}
+					
+					animationTimerActive = true;
+					skippedOnce = "false";
+					//console.log(playerXLocation, playerYLocation, playerZLocation);
+					stage.removeChild(gridIdle);
+				}
+			}
+		}
+	} else if (e.keyCode=="90") {
+        e.preventDefault();
+
+		if (screenState == "planetSelection") {
+			if (currentLevel.puzzleXDimension > 1) {
+				if (animationTimerActive == false) {
+					GridFadeInForwardAnimation.gotoAndPlay("FadeInForward");
+					GridFadeInForwardAnimation.x = 50;
+					GridFadeInForwardAnimation.y = 250;
+					GridFadeInForwardAnimation.currentFrame = 0;
+					stage.addChild(GridFadeInBackwardAnimation);
+					GridFadeOutBackwardAnimation.gotoAndPlay("FadeOutBackward");
+					GridFadeOutBackwardAnimation.x = 205;
+					GridFadeOutBackwardAnimation.y = 250;
+					GridFadeOutBackwardAnimation.currentFrame = 0;
+					stage.addChild(GridFadeOutBackwardAnimation);
+	
+					playerXLocation++;
+					if (playerXLocation==currentLevel.puzzleXDimension) {
+						playerXLocation = 0;
+					}
+	
+					while (planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked==true) {
+						for (i=0; i < currentLevel.solutionSteps; i++) {
+							if ("" + playerXLocation + ", " + playerYLocation +
+								", " + playerZLocation + ""==currentLevel.solutionLocationArray[i]) {
+								if (currentLevel.solutionDirectionArray[i]=="forward" && skippedOnce=="false") {
+									planetArray[playerXLocation][playerYLocation][playerZLocation].isLocked=false;
+								} else {
+									playerXLocation++;
+									skippedOnce = "true";
+								}
+							}
+						}
+						if (playerXLocation==currentLevel.puzzleXDimension) {
+							playerXLocation = 0;
+						}
+					}
+					
+					animationTimerActive = true;
+					skippedOnce = "false";
+					//console.log(playerXLocation, playerYLocation, playerZLocation);
+					stage.removeChild(gridIdle);
+				}
+			}
+		}
+	}
+}
+
+function tick(){
+    if (animationTimer<30) {
+        if (animationTimerActive==true) {
+            animationTimer++;
+        }
+    } else if (animationTimer==30){
+        animationTimerActive = false;
+		stage.removeChild(GridFadeInUpAnimation);
+		stage.removeChild(GridFadeInDownAnimation);
+		stage.removeChild(GridFadeOutUpAnimation);
+		stage.removeChild(GridFadeOutDownAnimation);
+			stage.removeChild(GridFadeInLeftAnimation);
+			stage.removeChild(GridFadeInRightAnimation);
+			stage.removeChild(GridFadeOutLeftAnimation);
+			stage.removeChild(GridFadeOutRightAnimation);
+				stage.removeChild(GridFadeInForwardAnimation);
+				stage.removeChild(GridFadeInBackwardAnimation);
+				stage.removeChild(GridFadeOutForwardAnimation);
+				stage.removeChild(GridFadeOutBackwardAnimation);
+		stage.addChild(gridIdle);
+        animationTimer = 0;
+    }
+    
+	stage.update();
+}
+</script>
+<link rel="stylesheet" href="main.css">
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+         
+         ga('create', 'UA-50377183-1', 'troymaynard.info');
+         ga('send', 'pageview');
+         
+        </script>
+    
+</head>
+
+<body onLoad="init();">
+<div id="center_maker">
+<br>
+
+<a href="index.html"><img src="WebpageAssets/HomeText.png" alt="resume" height="58" width="105"></a>
+<img src="WebpageAssets/DividingLine.png" alt="resume" height="73" width="47">
+
+<a href="ResumePage.html"><img src="WebpageAssets/ResumeText.png" alt="resume" height="59" width="133"></a>
+<img src="WebpageAssets/DividingLine.png" alt="resume" height="73" width="47">
+
+<a href="Native.html"><img src="WebpageAssets/NativeText.png" alt="resume" height="59" width="138"></a>
+<img src="WebpageAssets/DividingLine.png" alt="resume" height="73" width="47">
+
+<a href="Default1.html"><img src="WebpageAssets/DriftText.png" alt="resume" height="58" width="105"></a>
+<img src="WebpageAssets/DividingLine.png" alt="resume" height="73" width="47">
+
+<a href="SoundcloudPage.html"><img src="WebpageAssets/SoundCloudText.png" alt="resume" height="57" width="208"></a>
+
+<img src="WebpageAssets/Line.png" alt="resume" height="49" width="960">
+<canvas id="canvas" width="480" height="640"></canvas>
+<br>
+<br>
+<font size="6">Controls - arrows, space, backspace 
+</font>
+<br>
+<br>
+</div>
+<div style="position:absolute;filter:alpha(opacity=0);opacity:0.001;z-index:10;">                                                                                                                                                                                                                  </div></body>
+</html>
